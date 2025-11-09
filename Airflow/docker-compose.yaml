@@ -1,0 +1,29 @@
+services:
+  airflow-init:
+    image: apache/airflow:2.10.2
+    environment:
+      - AIRFLOW_UID=50000
+    command: version
+
+  webserver:
+    image: apache/airflow:2.10.2
+    environment:
+      - AIRFLOW_UID=50000
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AWS_DEFAULT_REGION=us-east-1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ~/.aws:/home/airflow/.aws:ro
+    command: webserver
+
+  scheduler:
+    image: apache/airflow:2.10.2
+    environment:
+      - AIRFLOW_UID=50000
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ~/.aws:/home/airflow/.aws:ro
+    command: scheduler
